@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title>On the River</title>
+  </head>
+  <body>
+    <h1>On The River</h1>
+    <p>The sun is low</p>
+    <p>The waters flow</p>
+    <script>
+      function walk(node, callback) {
+        callback(node);
+
+        for (let index = 0; index < node.childNodes.length; index += 1) {
+          walk(node.childNodes[index], callback);
+        }
+      }
+// Write a JavaScript function that returns the p elements in the DOM
+      function paragraphs() {
+        let p = [];
+        walk(document, node => {
+          if (node.nodeName === 'P') {
+            p.push(node);
+          }
+        });
+        return p;
+      }
+
+      console.log(paragraphs());
+
+      
+    </script>
+  </body>
+</html>
