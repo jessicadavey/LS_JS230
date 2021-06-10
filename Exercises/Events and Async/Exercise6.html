@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Selection Filters</title>
+  </head>
+  <body>
+    <form id="selection-filters" method="post" action="#">
+      <select id="animal-classifications">
+        <option value="Classifications" selected>Classifications</option>
+        <option value="Vertebrate">Vertebrate</option>
+        <option value="Warm-blooded">Warm-blooded</option>
+        <option value="Cold-blooded">Cold-blooded</option>
+        <option value="Mammal">Mammal</option>
+        <option value="Bird">Bird</option>
+      </select>
+      <select id="animals">
+        <option value="Animals" selected>Animals</option>
+        <option value="Bear">Bear</option>
+        <option value="Turtle">Turtle</option>
+        <option value="Whale">Whale</option>
+        <option value="Salmon">Salmon</option>
+        <option value="Ostrich">Ostrich</option>
+      </select>
+      <button id="clear">Clear</button>
+    </form>
+    <script>
+      /*
+      rules:
+        - changing the selection of one dropdown changes the available options in the other
+        - clicking the "Clear" button resets all selections back to the original
+
+      examples:
+
+        select "vertebrate"
+          animals list becomes "bear, turtle, whale, salmon, ostrich"
+        select "ostrich"
+          classifications list becomes "vertebrate, warm-blooded, bird"
+
+      data structures:
+
+        object with keys as selection and values as arrays of what the other list should contain
+
+        classifications = {
+          Vertebrate: ["Bear", "Turtle", "Salmon", "Ostrich"],
+          ...
+        }
+
+      algorithm:
+
+      when the value of a selection box changes
+        - get the value of the selection box
+        - look it up in the correct object
+        - for each item in the value array
+          - make an option for the opposite selection box
+
+      when 'clear' is clicked
+        - reset both selection groups to original values (including list titles)
+
+      */
+
+      let classificationNames = {
+        Classifications: null,
+        Vertebrate: ["Bear", "Turtle", "Whale", "Salmon", "Ostrich"],
+        "Warm-blooded": ["Bear", "Whale", "Ostrich"],
+        "Cold-blooded": ["Salmon", "Turtle"],
+        Mammal: ["Bear", "Whale"],
+        Bird: ["Ostrich"],
+      };
+
+      let animalNames = {
+        Animals: null,
+        Bear: ["Vertebrate", "Warm-blooded", "Mammal"],
+        Turtle: ["Vertebrate", "Cold-blooded"],
+        Whale: ["Vertebrate", "Warm-blooded", "Mammal"],
+        Salmon: ["Vertebrate", "Cold-blooded"],
+        Ostrich: ["Vertebrate", "Warm-blooded", "Bird"],
+      };
+
+      let form = document.querySelector("form");
+
+      let animalClassifications = form.querySelector("#animal-classifications");
+      let animals = form.querySelector("#animals");
+
+      form.addEventListener("input", (event) => {
+        if (event.target === animalClassifications) {
+          [...animals.children].forEach((child) => child.remove());
+
+          classificationNames[event.target.value].forEach((name) => {
+            let newAnimal = new Option(name);
+            animals.appendChild(newAnimal);
+          });
+        }
+
+        if (event.target === animals) {
+          [...animalClassifications.children].forEach((child) =>
+            child.remove()
+          );
+
+          animalNames[event.target.value].forEach((name) => {
+            let newClassification = document.createElement("option");
+            newClassification.value = name;
+            newClassification.textContent = name;
+
+            animalClassifications.appendChild(newClassification);
+          });
+        }
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        [...animalClassifications.children].forEach((child) => child.remove());
+
+        [...animals.children].forEach((child) => child.remove());
+
+        Object.keys(classificationNames).forEach((classification) => {
+          let newClassification = document.createElement("option");
+          newClassification.value = classification;
+          newClassification.textContent = classification;
+          animalClassifications.appendChild(newClassification);
+        });
+
+        Object.keys(animalNames).forEach((animal) => {
+          let newAnimal = document.createElement("option");
+          newAnimal.value = animal;
+          newAnimal.textContent = animal;
+
+          animals.appendChild(newAnimal);
+        });
+      });
+    </script>
+  </body>
+</html>
